@@ -8,7 +8,8 @@ Then add these 5 Class Library Projects + 1 MVC Project
 4.	Hospital.ViewModels 
 5.	Hospital.Data (for DbContext — recommended) 
 6.	Hospital.Web (ASP.NET Core MVC) 
-________________________________________2. Add Project References
+________________________________________
+2. Add Project References
 In Hospital.Web add references:
 •	Hospital.Models 
 •	Hospital.Repository 
@@ -228,6 +229,6 @@ ________________________________________
 }
 ________________________________________
  11. Run Migration
-Add-Migration InitialCreate
-Update-Database
+1. Add-Migration InitialCreate
+2. Update-Database
 
