@@ -232,3 +232,79 @@ ________________________________________
 1. Add-Migration InitialCreate
 2. Update-Database
 
+Step 1: Project Creation
+Created ASP.NET Core MVC project
+Used .NET 8 (LTS) for stability
+Enabled Razor Pages for Identity
+📌 Step 2: Solution Structure
+
+Created 3-layer architecture:
+
+H.Web → UI Layer (MVC)
+H.Repo → Repository Layer (Data Access)
+H.Utility → Common Utilities
+📌 Step 3: Install Required Packages
+
+Installed NuGet packages (version 8.0.6):
+
+Microsoft.EntityFrameworkCore
+Microsoft.EntityFrameworkCore.SqlServer
+Microsoft.EntityFrameworkCore.Tools
+Microsoft.AspNetCore.Identity.EntityFrameworkCore
+Microsoft.VisualStudio.Web.CodeGeneration.Design
+📌 Step 4: Configure Database
+
+Updated appsettings.json:
+
+"ConnectionStrings": {
+  "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=HospitalDB;Trusted_Connection=True;"
+}
+📌 Step 5: Setup DbContext
+Created ApplicationDbContext
+Inherited from IdentityDbContext
+Registered in Program.cs:
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+📌 Step 6: Configure Identity
+
+Added Identity services:
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+📌 Step 7: Implement Repository Pattern
+Created IGenericRepository<T>
+Implemented GenericRepository<T>
+Added CRUD operations (GetAll, GetById, Add, Update, Delete)
+📌 Step 8: Implement Unit of Work
+Created IUnitOfWork
+Implemented UnitOfWork
+Managed repositories and database transactions
+📌 Step 9: Dependency Injection
+
+Registered services in Program.cs:
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+📌 Step 10: Database Migration
+
+Executed commands:
+
+Add-Migration InitialCreate
+Update-Database
+📌 Step 11: Data Seeding
+Created IDbInitializer and DbInitializer
+Seeded default roles and admin user
+Called in Program.cs
+📌 Step 12: Authentication UI
+Added Login/Register pages using Identity
+Implemented _LoginPartial.cshtml
+Displayed user name and logout option
+📌 Step 13: Routing Setup
+
+Configured default route:
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{area=Patient}/{controller=Home}/{action=Index}/{id?}"
+);
