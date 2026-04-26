@@ -1,0 +1,58 @@
+/*using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+
+namespace H.Repo.Interfaces
+{
+    public interface IGenericRepository<T> where T : class
+    {
+        IEnumerable<T> GetAll(
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            string includeProperties = ""
+        );
+
+        IQueryable<T> GetQueryable(
+        Expression<Func<T, bool>> filter = null,
+        string includeProperties = ""
+    );
+        T GetById(object id);
+        Task<T> GetByIdAsync(object id);
+
+        void Add(T entity);
+        Task<T> AddAsync(T entity);
+
+        void Update(T entity);
+        Task<T> UpdateAsync(T entity);
+
+        void Delete(T entity);
+        Task<T> DeleteAsync(T entity);
+        object GetQueryable();
+    }
+}*/
+using System.Linq;
+using System.Linq.Expressions;
+
+namespace H.Repo.Interfaces
+{
+    public interface IGenericRepository<T> where T : class
+    {
+        IEnumerable<T> GetAll(
+            Expression<Func<T, bool>> filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+            string includeProperties = ""
+        );
+
+        IQueryable<T> GetQueryable(   // 🔥 MUST ADD
+            Expression<Func<T, bool>> filter = null,
+            string includeProperties = ""
+        );
+
+        T GetById(object id);
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(T entity);
+    }
+}

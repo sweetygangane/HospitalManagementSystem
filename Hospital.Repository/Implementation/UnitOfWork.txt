@@ -1,0 +1,67 @@
+using H.Repo.Interfaces;
+using System;
+using System.Collections;
+using System.Threading.Tasks;
+
+namespace H.Repo.Implementation
+{
+    public class UnitOfWork : IUnitOfWork, IDisposable
+    {
+        private readonly ApplicationDbContext _context;
+        private Hashtable _repositories;
+
+        public UnitOfWork(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // Generic Repository Getter (Reusable)
+        public IGenericRepository<T> GenericRepository<T>() where T : class
+        {
+            if (_repositories == null)
+                _repositories = new Hashtable();
+
+            var type = typeof(T).FullName;
+
+            if (!_repositories.ContainsKey(type))
+            {
+                var repositoryInstance = new GenericRepository<T>(_context);
+                _repositories.Add(type, repositoryInstance);
+            }
+
+            return (IGenericRepository<T>)_repositories[type];
+        }
+
+        // Save Changes
+        public void Save()
+        {
+            _context.SaveChanges();
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        // Dispose Pattern
+        private bool disposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+            }
+            disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+    }
+}
