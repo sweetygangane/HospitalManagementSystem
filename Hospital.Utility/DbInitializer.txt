@@ -1,0 +1,148 @@
+/*using H.Repo;
+using H.Utility;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+
+namespace H.Utility
+{
+    public class DbInitializer : IDbInitializer
+    {
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
+
+        public DbInitializer(
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            ApplicationDbContext context)
+        {
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _context = context;
+        }
+
+        public void Initialize()
+        {
+            // Apply migrations
+            if (_context.Database.GetPendingMigrations().Any())
+            {
+                _context.Database.Migrate();
+            }
+
+            // Create roles (FIX: check each role separately)
+            if (!_roleManager.RoleExistsAsync(WebSiteRoles.WebSite_Admin).GetAwaiter().GetResult())
+            {
+                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Admin)).GetAwaiter().GetResult();
+            }
+
+            if (!_roleManager.RoleExistsAsync(WebSiteRoles.WebSite_Patient).GetAwaiter().GetResult())
+            {
+                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Patient)).GetAwaiter().GetResult();
+            }
+
+            if (!_roleManager.RoleExistsAsync(WebSiteRoles.WebSite_Doctor).GetAwaiter().GetResult())
+            {
+                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Doctor)).GetAwaiter().GetResult();
+            }
+
+            // Create Admin User (FIX: check if already exists)
+            var existingUser = _userManager.FindByEmailAsync("admin@hospital.com").GetAwaiter().GetResult();
+*//**//*
+            if (existingUser == null)
+            {
+                var user = new IdentityUser
+                {
+                    UserName = "admin@hospital.com",
+                    Email = "admin@hospital.com",
+                    EmailConfirmed = true
+                };
+
+                var result = _userManager.CreateAsync(user, "Admin@123").GetAwaiter().GetResult();
+
+                if (result.Succeeded)
+                {
+                    _userManager.AddToRoleAsync(user, WebSiteRoles.WebSite_Admin)
+                        .GetAwaiter().GetResult();
+                }
+            }
+        }
+    }
+}*/
+
+using H.Repo;
+using H.Utility;
+using Hospital.Model;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+
+namespace H.Utility
+{
+    public class DbInitializer : IDbInitializer
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
+
+        public DbInitializer(
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            ApplicationDbContext context)
+        {
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _context = context;
+        }
+
+        public void Initialize()
+        {
+            // Apply migrations
+            if (_context.Database.GetPendingMigrations().Any())
+            {
+                _context.Database.Migrate();
+            }
+
+            // Create roles
+            if (!_roleManager.RoleExistsAsync(WebSiteRoles.WebSite_Admin).GetAwaiter().GetResult())
+            {
+                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Admin)).GetAwaiter().GetResult();
+            }
+
+            if (!_roleManager.RoleExistsAsync(WebSiteRoles.WebSite_Patient).GetAwaiter().GetResult())
+            {
+                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Patient)).GetAwaiter().GetResult();
+            }
+
+            if (!_roleManager.RoleExistsAsync(WebSiteRoles.WebSite_Doctor).GetAwaiter().GetResult())
+            {
+                _roleManager.CreateAsync(new IdentityRole(WebSiteRoles.WebSite_Doctor)).GetAwaiter().GetResult();
+            }
+
+            // Create Admin User (SAFE CHECK)
+            ApplicationUser? existingUser = _userManager.FindByEmailAsync("admin@hospital.com")
+                .GetAwaiter().GetResult();
+
+            if (existingUser == null)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = "admin@hospital.com",
+                    Email = "admin@hospital.com",
+                    EmailConfirmed = true
+                };
+
+                var result = _userManager.CreateAsync(user, "Admin@123")
+                    .GetAwaiter().GetResult();
+
+                if (result.Succeeded)
+                {
+                    _userManager.AddToRoleAsync(user, WebSiteRoles.WebSite_Admin)
+                        .GetAwaiter().GetResult();
+                }
+            }
+        }
+    }
+}

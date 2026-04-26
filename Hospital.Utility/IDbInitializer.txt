@@ -1,0 +1,7 @@
+namespace H.Utility
+{
+    public interface IDbInitializer
+    {
+        void Initialize();
+    }
+}
