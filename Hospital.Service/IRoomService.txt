@@ -1,0 +1,19 @@
+using H.Utility;
+using H.ViewModel;
+using System.Collections.Generic;
+
+namespace H.Services
+{
+    public interface IRoomService
+    {
+        PageResult<RoomViewModel> GetAll(int pageNumber, int pageSize);
+
+        RoomViewModel GetRoomById(int roomId);
+
+        void InsertRoom(RoomViewModel room);
+
+        void UpdateRoom(RoomViewModel room);
+
+        void DeleteRoom(int id);
+    }
+}

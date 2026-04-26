@@ -1,0 +1,108 @@
+using H.Model;
+using H.Repo.Interfaces;
+using H.Utility;
+using H.ViewModel;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace H.Services
+{
+    public class ContactServices : IContactService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public ContactServices(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+        // ================= GET ALL =================
+        public PageResult<ContactViewModel> GetAll(int pageNumber, int pageSize)
+        {
+            var repo = _unitOfWork.GenericRepository<Contact>();
+
+            var totalItems = repo.GetAll().Count();
+
+            var data = repo.GetAll()
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var vmList = data.Select(x => new ContactViewModel
+            {
+                Id = x.Id,
+                Email = x.Email,
+                Phone = x.Phone,
+                HospitalId = x.HospitalId
+            }).ToList();
+
+            return new PageResult<ContactViewModel>
+            {
+                Data = vmList,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
+        }
+
+        // ================= GET BY ID =================
+        public ContactViewModel GetContactById(int contactId)
+        {
+            var model = _unitOfWork.GenericRepository<Contact>().GetById(contactId);
+
+            if (model == null) return null;
+
+            return new ContactViewModel
+            {
+                Id = model.Id,
+                Email = model.Email,
+                Phone = model.Phone,
+                HospitalId = model.HospitalId
+            };
+        }
+
+        // ================= INSERT =================
+        public void InsertContact(ContactViewModel contact)
+        {
+            var model = new Contact
+            {
+                Email = contact.Email,
+                Phone = contact.Phone,
+                HospitalId = contact.HospitalId
+            };
+
+            _unitOfWork.GenericRepository<Contact>().Add(model);
+            _unitOfWork.Save();
+        }
+
+        // ================= UPDATE =================
+        public void UpdateContact(ContactViewModel contact)
+        {
+            var repo = _unitOfWork.GenericRepository<Contact>();
+            var model = repo.GetById(contact.Id);
+
+            if (model != null)
+            {
+                model.Email = contact.Email;
+                model.Phone = contact.Phone;
+                model.HospitalId = contact.HospitalId;
+
+                repo.Update(model);
+                _unitOfWork.Save();
+            }
+        }
+
+        // ================= DELETE =================
+        public void DeleteContact(int id)
+        {
+            var repo = _unitOfWork.GenericRepository<Contact>();
+            var model = repo.GetById(id);
+
+            if (model != null)
+            {
+                repo.Delete(model);
+                _unitOfWork.Save();
+            }
+        }
+    }
+}

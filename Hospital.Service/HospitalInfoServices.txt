@@ -1,0 +1,159 @@
+using H.Model;
+using H.Repo.Interfaces;
+using H.Utility;
+using H.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Collections;
+using System.Data;
+
+namespace H.Services
+{
+    public class HospitalInfoServices : IHospitalInfo
+    {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public HospitalInfoServices(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+        // ================= GET ALL =================
+        public List<HospitalInfoViewModel> GetAll()
+        {
+            var repo = _unitOfWork.GenericRepository<HospitalInfo>();
+
+            var data = repo.GetAll().ToList();
+
+            return data.Select(x => new HospitalInfoViewModel
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Type = x.Type,
+                City = x.City,
+                PinCode = x.PinCode,
+                Country = x.Country
+            }).ToList();
+        }
+
+        // ================= GET BY ID =================
+        public HospitalInfoViewModel GetHospitalById(int id)
+        {
+            var model = _unitOfWork.GenericRepository<HospitalInfo>().GetById(id);
+
+            if (model == null) return null;
+
+            return new HospitalInfoViewModel
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Type = model.Type,
+                City = model.City,
+                PinCode = model.PinCode,
+                Country = model.Country
+            };
+        }
+
+        // ================= INSERT =================
+        public void InsertHospitalInfo(HospitalInfoViewModel vm)
+        {
+            var model = new HospitalInfo
+            {
+                Name = vm.Name,
+                Type = vm.Type,
+                City = vm.City,
+                PinCode = vm.PinCode,
+                Country = vm.Country
+            };
+
+            _unitOfWork.GenericRepository<HospitalInfo>().Add(model);
+            _unitOfWork.Save();
+        }
+
+        // ================= UPDATE =================
+        public void UpdateHospitalInfo(HospitalInfoViewModel vm)
+        {
+            var repo = _unitOfWork.GenericRepository<HospitalInfo>();
+            var model = repo.GetById(vm.Id);
+
+            if (model != null)
+            {
+                model.Name = vm.Name;
+                model.Type = vm.Type;
+                model.City = vm.City;
+                model.PinCode = vm.PinCode;
+                model.Country = vm.Country;
+
+                repo.Update(model);
+                _unitOfWork.Save();
+            }
+        }
+
+        // ================= DELETE =================
+        public void DeleteHospitalInfo(int id)
+        {
+            var repo = _unitOfWork.GenericRepository<HospitalInfo>();
+            var model = repo.GetById(id);
+
+            if (model != null)
+            {
+                repo.Delete(model);
+                _unitOfWork.Save();
+            }
+        }
+
+        // ================= PAGINATION =================
+        public PageResult<HospitalInfoViewModel> GetAll(int pageNumber, int pageSize)
+        {
+            var vm = new HospitalInfoViewModel();
+            int totalCount = 0;
+            List<HospitalInfoViewModel> vmList = new List<HospitalInfoViewModel>();
+
+            try
+            {
+                int ExcludeRecords = (pageSize * pageNumber) - pageSize;
+
+                var repo = _unitOfWork.GenericRepository<HospitalInfo>();
+
+                var modelList = repo.GetAll()
+                    .OrderBy(x => x.Id) // ✅ Added (important)
+                    .Skip(ExcludeRecords)
+                    .Take(pageSize)
+                    .ToList();
+
+                totalCount = repo.GetAll().Count(); // ✅ Fixed
+
+                vmList = ConvertModelToViewModelList(modelList);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            // ✅ Added missing result
+            var result = new PageResult<HospitalInfoViewModel>
+            {
+                Data = vmList,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalItems = totalCount
+            };
+
+            return result;
+        }
+
+        private List<HospitalInfoViewModel> ConvertModelToViewModelList(List<HospitalInfo> modelList)
+        {
+            return modelList.Select(x => new HospitalInfoViewModel
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Type = x.Type,
+                City = x.City,
+                PinCode = x.PinCode,
+                Country = x.Country
+            }).ToList();
+        }
+    }
+}

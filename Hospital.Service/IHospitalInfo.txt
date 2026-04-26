@@ -1,0 +1,14 @@
+using H.Utility;
+using H.ViewModel;
+
+public interface IHospitalInfo
+{
+    List<HospitalInfoViewModel> GetAll();
+
+    PageResult<HospitalInfoViewModel> GetAll(int pageNumber, int pageSize);
+
+    HospitalInfoViewModel GetHospitalById(int id);
+    void InsertHospitalInfo(HospitalInfoViewModel vm);
+    void UpdateHospitalInfo(HospitalInfoViewModel vm);
+    void DeleteHospitalInfo(int id);
+}

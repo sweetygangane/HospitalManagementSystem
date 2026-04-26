@@ -1,0 +1,19 @@
+using H.Utility;
+using H.ViewModel;
+using System.Collections.Generic;
+
+namespace H.Services
+{
+    public interface IContactService
+    {
+        PageResult<ContactViewModel> GetAll(int pageNumber, int pageSize);
+
+        ContactViewModel GetContactById(int contactId);
+
+        void InsertContact(ContactViewModel contact);
+
+        void UpdateContact(ContactViewModel contact);
+
+        void DeleteContact(int id);
+    }
+}

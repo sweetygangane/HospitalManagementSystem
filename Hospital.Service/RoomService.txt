@@ -1,0 +1,112 @@
+using H.Model;
+using H.Repo.Interfaces;
+using H.Utility;
+using H.ViewModel;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace H.Services
+{
+    public class RoomService : IRoomService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public RoomService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+        // ================= GET ALL (PAGINATION) =================
+        public PageResult<RoomViewModel> GetAll(int pageNumber, int pageSize)
+        {
+            var repo = _unitOfWork.GenericRepository<Room>();
+
+            var totalItems = repo.GetAll().Count();
+
+            var data = repo.GetAll()
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var vmList = data.Select(x => new RoomViewModel
+            {
+                Id = x.Id,
+                RoomNumber = x.RoomNumber,
+                Type = x.Type,
+                Status = x.Status,
+                HospitalId = x.HospitalId
+            }).ToList();
+
+            return new PageResult<RoomViewModel>
+            {
+                Data = vmList,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
+        }
+
+        // ================= GET BY ID =================
+        public RoomViewModel GetRoomById(int roomId)
+        {
+            var model = _unitOfWork.GenericRepository<Room>().GetById(roomId);
+
+            if (model == null) return null;
+
+            return new RoomViewModel
+            {
+                Id = model.Id,
+                RoomNumber = model.RoomNumber,
+                Type = model.Type,
+                Status = model.Status,
+                HospitalId = model.HospitalId
+            };
+        }
+
+        // ================= INSERT =================
+        public void InsertRoom(RoomViewModel room)
+        {
+            var model = new Room
+            {
+                RoomNumber = room.RoomNumber,
+                Type = room.Type,
+                Status = room.Status,
+                HospitalId = room.HospitalId
+            };
+
+            _unitOfWork.GenericRepository<Room>().Add(model);
+            _unitOfWork.Save();
+        }
+
+        // ================= UPDATE =================
+        public void UpdateRoom(RoomViewModel room)
+        {
+            var repo = _unitOfWork.GenericRepository<Room>();
+            var model = repo.GetById(room.Id);
+
+            if (model != null)
+            {
+                model.RoomNumber = room.RoomNumber;
+                model.Type = room.Type;
+                model.Status = room.Status;
+                model.HospitalId = room.HospitalId;
+
+                repo.Update(model);
+                _unitOfWork.Save();
+            }
+        }
+
+        // ================= DELETE =================
+        public void DeleteRoom(int id)
+        {
+            var repo = _unitOfWork.GenericRepository<Room>();
+            var model = repo.GetById(id);
+
+            if (model != null)
+            {
+                repo.Delete(model);
+                _unitOfWork.Save();
+            }
+        }
+    }
+}
