@@ -1,0 +1,38 @@
+using H.Model;
+
+namespace H.ViewModel
+{
+    public class ContactViewModel
+    {
+        public int Id { get; set; }
+
+        public string Email { get; set; }
+
+        public string Phone { get; set; }
+
+        public int HospitalId { get; set; } // ✅ cleaner name
+
+        // ================= CONSTRUCTOR =================
+        public ContactViewModel() { }
+
+        public ContactViewModel(Contact model)
+        {
+            Id = model.Id;
+            Email = model.Email;
+            Phone = model.Phone;
+            HospitalId = model.HospitalId;
+        }
+
+        // ================= CONVERT TO MODEL =================
+        public Contact ConvertToModel()
+        {
+            return new Contact
+            {
+                Id = this.Id,
+                Email = this.Email,
+                Phone = this.Phone,
+                HospitalId = this.HospitalId
+            };
+        }
+    }
+}

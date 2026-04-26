@@ -1,0 +1,87 @@
+/*using System;
+using H.Model;
+namespace H.ViewModel
+{
+    public class HospitalInfoViewModel
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; } = string.Empty;
+
+        public string Type { get; set; } = string.Empty;
+
+        public string City { get; set; } = string.Empty;
+
+        public string PinCode { get; set; } = string.Empty;
+
+        public string Country { get; set; } = string.Empty;
+
+        public HospitalInfoViewModel() { }
+
+        // Convert Model → ViewModel
+        public HospitalInfoViewModel(HospitalInfo model)
+        {
+            Id = model.Id;
+            Name = model.Name;
+            Type = model.Type;
+            City = model.City;
+            PinCode = model.PinCode;
+            Country = model.Country;
+        }
+
+        // Convert ViewModel → Model
+        public HospitalInfo ConvertViewModel(HospitalInfoViewModel model)
+        {
+            return new HospitalInfo
+            {
+                Id = model.Id,
+                Name = model.Name,
+                Type = model.Type,
+                City = model.City,
+                PinCode = model.PinCode,
+                Country = model.Country
+            };
+        }
+    }
+}*/
+using H.Model;
+
+namespace H.ViewModel
+{
+    public class HospitalInfoViewModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string PinCode { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
+
+        // Convert Model → ViewModel
+        public HospitalInfoViewModel() { }
+
+        public HospitalInfoViewModel(HospitalInfo model)
+        {
+            Id = model.Id;
+            Name = model.Name;
+            Type = model.Type;
+            City = model.City;
+            PinCode = model.PinCode;
+            Country = model.Country;
+        }
+
+        // Convert ViewModel → Model  ⭐ ADD THIS
+        public HospitalInfo ConvertToModel()
+        {
+            return new HospitalInfo
+            {
+                Id = Id,
+                Name = Name,
+                Type = Type,
+                City = City,
+                PinCode = PinCode,
+                Country = Country
+            };
+        }
+    }
+}

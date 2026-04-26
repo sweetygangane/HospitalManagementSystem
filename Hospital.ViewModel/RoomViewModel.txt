@@ -1,0 +1,40 @@
+using H.Model;
+using System;
+
+namespace H.ViewModel
+{
+    public class RoomViewModel
+    {
+        public int Id { get; set; }
+        public string RoomNumber { get; set; }
+        public string Type { get; set; }
+        public string Status { get; set; }
+
+        public int HospitalId { get; set; } // ✅ FIXED
+
+        // ================= CONSTRUCTOR =================
+        public RoomViewModel() { }
+
+        public RoomViewModel(Room model)
+        {
+            Id = model.Id;
+            RoomNumber = model.RoomNumber;
+            Type = model.Type;
+            Status = model.Status;
+            HospitalId = model.HospitalId;
+        }
+
+        // ================= CONVERT TO MODEL =================
+        public Room ConvertToModel()
+        {
+            return new Room
+            {
+                Id = this.Id,
+                RoomNumber = this.RoomNumber,
+                Type = this.Type,
+                Status = this.Status,
+                HospitalId = this.HospitalId
+            };
+        }
+    }
+}
