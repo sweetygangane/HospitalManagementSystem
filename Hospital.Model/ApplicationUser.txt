@@ -1,0 +1,28 @@
+using H.Model;
+using Microsoft.AspNetCore.Identity;
+
+namespace Hospital.Model
+{
+    public class ApplicationUser : IdentityUser
+    {
+        public string Name { get; set; }
+        public Gender? Gender { get; set; }
+        public string? Nationality { get; set; }
+        public string? Address { get; set; }
+        public DateTime? DOB { get; set; }
+
+        public string Specialist { get; set; }
+        public ICollection<Appointment> Appointments { get; set; }
+
+
+
+    }
+    }
+
+namespace H.Model
+{
+   public enum Gender
+    {
+        Male,Female,Other
+    }
+}
